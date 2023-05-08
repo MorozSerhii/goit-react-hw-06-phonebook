@@ -1,3 +1,4 @@
+import { useDispatch, useSelector } from 'react-redux';
 import {
   List,
   NameContact,
@@ -6,13 +7,23 @@ import {
   Icon,
   ListContact,
 } from './ContactList.styled';
+import { delContact } from 'Redux/slice';
 
-import PropTypes from 'prop-types';
+export const ContactList = () => {
+  const contacts = useSelector(state => state.contacts);
+  const filter = useSelector(state => state.filterContacts);
+  const dithpatch = useDispatch();
 
-export const ContactList = ({ contacts, delContact }) => {
+  const filteredConacts = filter
+    ? contacts.filter(({ name }) =>
+        name.toLowerCase().includes(filter.toLowerCase())
+      )
+    : contacts;
+
   return (
     <ListContact>
-      {contacts.map(({ id, name, number }) => (
+      {filteredConacts.length === 0 && <p>no matches💩</p>}
+      {filteredConacts.map(({ id, name, number }) => (
         <List
           key={id}
           animate={{ opacity: 1, y: 0 }}
@@ -24,7 +35,7 @@ export const ContactList = ({ contacts, delContact }) => {
             <Span>{number}</Span>
           </Wrap>
 
-          <button type="button" onClick={() => delContact(id)}>
+          <button type="button" onClick={() => dithpatch(delContact(id))}>
             <Icon
               viewBox="0 0 15 17.5"
               height="17.5"
@@ -42,15 +53,4 @@ export const ContactList = ({ contacts, delContact }) => {
       ))}
     </ListContact>
   );
-};
-
-ContactList.propTypes = {
-  contacts: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
-      number: PropTypes.string.isRequired,
-    }).isRequired
-  ).isRequired,
-  delContact: PropTypes.func.isRequired,
 };

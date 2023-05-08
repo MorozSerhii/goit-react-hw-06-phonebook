@@ -1,7 +1,15 @@
+import { useDispatch } from 'react-redux';
 import { Label, Form, InputName, TextFilter } from './Filter.styled';
-import PropTypes from 'prop-types';
 
-export const Filter = ({ filter, change }) => {
+import { getFilter } from 'Redux/slice';
+
+export const Filter = () => {
+  const dispatch = useDispatch();
+
+  const handlerChange = e => {
+    const filterValue = e.target.value;
+    dispatch(getFilter(filterValue));
+  };
   return (
     <Form>
       <Label>
@@ -11,14 +19,9 @@ export const Filter = ({ filter, change }) => {
           name="filter"
           title="find some contact"
           required
-          value={filter}
-          onChange={change}
+          onChange={handlerChange}
         />
       </Label>
     </Form>
   );
-};
-Filter.propTypes = {
-  filter: PropTypes.string.isRequired,
-  change: PropTypes.func.isRequired,
 };
